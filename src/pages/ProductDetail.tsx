@@ -2,11 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ArrowLeft, Minus, Plus, ShoppingCart, Truck, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { products, formatPrice } from "@/data/products";
+import { products, formatPrice, ProductVariant } from "@/data/products";
 import { useCart } from "@/context/CartContext";
-import { ProductVariant } from "@/data/products";
-import Header from "@/components/Header";
-import CartDrawer from "@/components/CartDrawer";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -20,11 +17,8 @@ const ProductDetail = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container py-12 text-center">
-          <p className="text-muted-foreground">Mahsulot topilmadi</p>
-        </div>
+      <div className="container py-12 text-center">
+        <p className="text-muted-foreground">Mahsulot topilmadi</p>
       </div>
     );
   }
@@ -43,9 +37,6 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <CartDrawer />
-
       <div className="container py-4">
         <button
           onClick={() => navigate(-1)}
@@ -58,11 +49,7 @@ const ProductDetail = () => {
         <div className="grid gap-8 md:grid-cols-2">
           {/* Image */}
           <div className="overflow-hidden rounded-xl bg-muted">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="h-full w-full object-cover"
-            />
+            <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
           </div>
 
           {/* Info */}
@@ -75,8 +62,8 @@ const ProductDetail = () => {
               <span className="text-lg text-muted-foreground line-through">{formatPrice(product.oldPrice)}</span>
             </div>
 
-            <p className="mt-3 flex items-center gap-2 text-sm font-medium text-green-600">
-              <span className="h-2 w-2 rounded-full bg-green-500" />
+            <p className="mt-3 flex items-center gap-2 text-sm font-medium" style={{ color: "hsl(142, 71%, 45%)" }}>
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "hsl(142, 71%, 45%)" }} />
               Omborda: {product.stock}
             </p>
 
@@ -112,21 +99,11 @@ const ProductDetail = () => {
             {/* Quantity */}
             <div className="mt-6 flex items-center gap-3">
               <span className="text-sm font-medium">Miqdor:</span>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-9 w-9"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              >
+              <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
                 <Minus className="h-4 w-4" />
               </Button>
               <span className="w-8 text-center font-semibold">{quantity}</span>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-9 w-9"
-                onClick={() => setQuantity((q) => q + 1)}
-              >
+              <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => setQuantity((q) => q + 1)}>
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -137,7 +114,7 @@ const ProductDetail = () => {
               Savatga qo'shish
             </Button>
 
-            {/* Delivery & Payment Info */}
+            {/* Delivery & Payment */}
             <div className="mt-6 flex gap-6 rounded-lg border p-4">
               <div className="flex items-start gap-3">
                 <Truck className="mt-0.5 h-5 w-5 text-muted-foreground" />
@@ -165,14 +142,6 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="mt-12 border-t py-6">
-        <div className="container flex flex-col items-center justify-between gap-2 sm:flex-row">
-          <p className="text-sm text-muted-foreground">© 2024 Xoztovars. Barcha huquqlar himoyalangan.</p>
-          <p className="text-sm text-muted-foreground">+998 90 123 45 67</p>
-        </div>
-      </footer>
     </div>
   );
 };

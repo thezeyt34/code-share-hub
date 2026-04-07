@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
-import CartDrawer from "@/components/CartDrawer";
 import { products, categories } from "@/data/products";
 
 const Index = () => {
@@ -18,9 +16,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <CartDrawer />
-
       {/* Hero */}
       <section className="py-12 text-center">
         <div className="container">
@@ -63,14 +58,6 @@ const Index = () => {
           )}
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t py-6">
-        <div className="container flex flex-col items-center justify-between gap-2 sm:flex-row">
-          <p className="text-sm text-muted-foreground">© 2024 Xoztovars. Barcha huquqlar himoyalangan.</p>
-          <p className="text-sm text-muted-foreground">+998 90 123 45 67</p>
-        </div>
-      </footer>
     </div>
   );
 };
