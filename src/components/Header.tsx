@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [search, setSearch] = useState("");
-  const { totalItems, setIsOpen } = useCart();
+  const { totalItems } = useCart();
   const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -35,10 +35,15 @@ const Header = () => {
           />
         </form>
 
-        <Button variant="ghost" size="icon" className="relative" onClick={() => setIsOpen(true)}>
+        <Button
+          variant={totalItems > 0 ? "default" : "ghost"}
+          size="icon"
+          className="relative"
+          onClick={() => navigate("/cart")}
+        >
           <ShoppingCart className="h-5 w-5" />
           {totalItems > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
               {totalItems}
             </span>
           )}

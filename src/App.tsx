@@ -5,9 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
-import CartDrawer from "@/components/CartDrawer";
 import Index from "./pages/Index.tsx";
 import ProductDetail from "./pages/ProductDetail.tsx";
+import CartPage from "./pages/CartPage.tsx";
+import CheckoutPage from "./pages/CheckoutPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -20,12 +21,15 @@ const App = () => (
       <BrowserRouter>
         <CartProvider>
           <Header />
-          <CartDrawer />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/products/:id" element={<ProductDetail />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <main>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/products/:id" element={<ProductDetail />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
           <footer className="border-t py-6">
             <div className="container flex flex-col items-center justify-between gap-2 sm:flex-row">
               <p className="text-sm text-muted-foreground">© 2024 Xoztovars. Barcha huquqlar himoyalangan.</p>
