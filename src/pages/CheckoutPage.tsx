@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/context/CartContext";
+import { useOrders } from "@/context/OrderContext";
 import { formatPrice } from "@/data/products";
 import { toast } from "sonner";
 import DeliveryMap from "@/components/DeliveryMap";
@@ -15,6 +16,7 @@ type PaymentMethod = "cash" | "card" | "transfer";
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
+  const { addOrder } = useOrders();
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("+998 90 123 45 67");
@@ -47,7 +49,19 @@ const CheckoutPage = () => {
       String(now.getDate()).padStart(2, "0");
     const randomNum = Math.floor(1000 + Math.random() * 9000);
     const orderNumber = `XOZ-${dateStr}-${randomNum}`;
-    
+
+    addOrder({
+      orderNumber,
+      customerName: name,
+      phone,
+      items: [...items],
+      totalPrice,
+      deliveryMethod,
+      paymentMethod,
+      comment: comment || undefined,
+      address: deliveryMethod === "delivery" ? address : undefined,
+    });
+
     clearCart();
     navigate("/order-success", { state: { orderNumber } });
   };

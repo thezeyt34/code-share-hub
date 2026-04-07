@@ -1,4 +1,4 @@
-import { Search, ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart, Shield } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -35,19 +35,29 @@ const Header = () => {
           />
         </form>
 
-        <Button
-          variant={totalItems > 0 ? "default" : "ghost"}
-          size="icon"
-          className="relative"
-          onClick={() => navigate("/cart")}
-        >
-          <ShoppingCart className="h-5 w-5" />
-          {totalItems > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
-              {totalItems}
-            </span>
-          )}
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/admin/login")}
+            title="Admin Panel"
+          >
+            <Shield className="h-5 w-5" />
+          </Button>
+          <Button
+            variant={totalItems > 0 ? "default" : "ghost"}
+            size="icon"
+            className="relative"
+            onClick={() => navigate("/cart")}
+          >
+            <ShoppingCart className="h-5 w-5" />
+            {totalItems > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+                {totalItems}
+              </span>
+            )}
+          </Button>
+        </div>
       </div>
     </header>
   );
