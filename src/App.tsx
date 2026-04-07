@@ -31,6 +31,7 @@ const App = () => (
               <Routes>
                 {/* Admin routes — no Header/footer */}
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/orders" element={<AdminOrders />} />
                 <Route path="/admin/login" element={<><Header /><AdminLogin /></>} />
 
                 {/* Public routes */}
