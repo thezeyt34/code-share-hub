@@ -41,9 +41,15 @@ const CheckoutPage = () => {
       return;
     }
 
-    toast.success("Buyurtma qabul qilindi! Tez orada siz bilan bog'lanamiz.");
+    const now = new Date();
+    const dateStr = now.getFullYear().toString() +
+      String(now.getMonth() + 1).padStart(2, "0") +
+      String(now.getDate()).padStart(2, "0");
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    const orderNumber = `XOZ-${dateStr}-${randomNum}`;
+    
     clearCart();
-    navigate("/");
+    navigate("/order-success", { state: { orderNumber } });
   };
 
   return (
