@@ -8,7 +8,7 @@ export interface Order {
   phone: string;
   items: CartItem[];
   totalPrice: number;
-  status: "Yangi" | "Tayyor" | "Yetkazildi";
+  status: "Yangi" | "Tayyorlanmoqda" | "Tayyor" | "Yetkazildi" | "Bekor qilingan";
   createdAt: Date;
   deliveryMethod: "pickup" | "delivery";
   paymentMethod: "cash" | "card" | "transfer";
@@ -19,6 +19,7 @@ export interface Order {
 interface OrderContextType {
   orders: Order[];
   addOrder: (order: Omit<Order, "id" | "createdAt" | "status">) => void;
+  updateOrderStatus: (id: string, status: Order["status"]) => void;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -125,8 +126,12 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     setOrders((prev) => [newOrder, ...prev]);
   }, []);
 
+  const updateOrderStatus = useCallback((id: string, status: Order["status"]) => {
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
+  }, []);
+
   return (
-    <OrderContext.Provider value={{ orders, addOrder }}>
+    <OrderContext.Provider value={{ orders, addOrder, updateOrderStatus }}>
       {children}
     </OrderContext.Provider>
   );
