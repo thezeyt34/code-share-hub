@@ -1,15 +1,32 @@
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product, formatPrice } from "@/data/products";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "@/context/CartContext";
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (product: Product) => void;
 }
 
-const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
+const ProductCard = ({ product }: ProductCardProps) => {
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+
+  const hasVariants = product.variants && product.variants.length > 0;
+
+  const handleAction = () => {
+    if (hasVariants) {
+      navigate(`/products/${product.id}`);
+    } else {
+      addToCart(product, 1);
+    }
+  };
+
   return (
-    <div className="group overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-lg">
+    <div
+      className="group cursor-pointer overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-lg"
+      onClick={() => navigate(`/products/${product.id}`)}
+    >
       <div className="relative aspect-square overflow-hidden bg-muted">
         <img
           src={product.image}
@@ -20,9 +37,9 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
         <span className="absolute left-3 top-3 rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
           -{product.discount}%
         </span>
-        {product.variants && (
+        {hasVariants && (
           <span className="absolute right-3 top-3 rounded-full bg-foreground/70 px-2.5 py-1 text-xs font-semibold text-background">
-            {product.variants} variant
+            {product.variants!.length} variant
           </span>
         )}
       </div>
@@ -33,12 +50,15 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           <span className="text-sm text-muted-foreground line-through">{formatPrice(product.oldPrice)}</span>
         </div>
         <Button
-          onClick={() => onAddToCart(product)}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleAction();
+          }}
           className="mt-3 w-full gap-2"
           size="sm"
         >
           <ShoppingCart className="h-4 w-4" />
-          {product.variants ? "Tanlash" : "Savatga"}
+          {hasVariants ? "Tanlash" : "Savatga"}
         </Button>
       </div>
     </div>

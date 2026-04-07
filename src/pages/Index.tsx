@@ -1,26 +1,25 @@
 import { useState } from "react";
-import { toast } from "sonner";
+import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
-import { products, categories, Product } from "@/data/products";
+import CartDrawer from "@/components/CartDrawer";
+import { products, categories } from "@/data/products";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("Hammasi");
-  const [cart, setCart] = useState<Product[]>([]);
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search")?.toLowerCase() || "";
 
-  const filteredProducts =
-    activeCategory === "Hammasi"
-      ? products
-      : products.filter((p) => p.category === activeCategory);
-
-  const handleAddToCart = (product: Product) => {
-    setCart((prev) => [...prev, product]);
-    toast.success(`${product.name} savatga qo'shildi!`);
-  };
+  const filteredProducts = products.filter((p) => {
+    const matchesCategory = activeCategory === "Hammasi" || p.category === activeCategory;
+    const matchesSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery);
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="min-h-screen bg-background">
-      <Header cartCount={cart.length} onCartClick={() => toast.info("Savat bo'sh emas!")} />
+      <Header />
+      <CartDrawer />
 
       {/* Hero */}
       <section className="py-12 text-center">
@@ -37,7 +36,6 @@ const Index = () => {
       {/* Products */}
       <section className="pb-16">
         <div className="container">
-          {/* Category Filter */}
           <div className="mb-8 flex gap-2">
             {categories.map((cat) => (
               <button
@@ -54,25 +52,22 @@ const Index = () => {
             ))}
           </div>
 
-          {/* Product Grid */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={handleAddToCart}
-              />
-            ))}
-          </div>
+          {filteredProducts.length === 0 ? (
+            <p className="py-12 text-center text-muted-foreground">Mahsulotlar topilmadi</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t py-6">
         <div className="container flex flex-col items-center justify-between gap-2 sm:flex-row">
-          <p className="text-sm text-muted-foreground">
-            © 2024 Xoztovars. Barcha huquqlar himoyalangan.
-          </p>
+          <p className="text-sm text-muted-foreground">© 2024 Xoztovars. Barcha huquqlar himoyalangan.</p>
           <p className="text-sm text-muted-foreground">+998 90 123 45 67</p>
         </div>
       </footer>
