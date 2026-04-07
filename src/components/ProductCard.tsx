@@ -14,7 +14,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const hasVariants = product.variants && product.variants.length > 0;
 
-  const handleAction = () => {
+  const handleAction = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (hasVariants) {
       navigate(`/products/${product.id}`);
     } else {
@@ -49,14 +50,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <span className="text-lg font-bold text-primary">{formatPrice(product.price)}</span>
           <span className="text-sm text-muted-foreground line-through">{formatPrice(product.oldPrice)}</span>
         </div>
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAction();
-          }}
-          className="mt-3 w-full gap-2"
-          size="sm"
-        >
+        <Button onClick={handleAction} className="mt-3 w-full gap-2" size="sm">
           <ShoppingCart className="h-4 w-4" />
           {hasVariants ? "Tanlash" : "Savatga"}
         </Button>
