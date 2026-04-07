@@ -8,7 +8,7 @@ export interface Order {
   phone: string;
   items: CartItem[];
   totalPrice: number;
-  status: "Yangi" | "Tayyor" | "Yetkazildi";
+  status: "Yangi" | "Tayyorlanmoqda" | "Tayyor" | "Yetkazildi" | "Bekor qilingan";
   createdAt: Date;
   deliveryMethod: "pickup" | "delivery";
   paymentMethod: "cash" | "card" | "transfer";
