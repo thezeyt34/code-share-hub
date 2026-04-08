@@ -7,6 +7,7 @@ import { CartProvider } from "@/context/CartContext";
 import { OrderProvider } from "@/context/OrderContext";
 import { ProductProvider } from "@/context/ProductContext";
 import { AdminProvider } from "@/context/AdminContext";
+import { CategoryProvider } from "@/context/CategoryContext";
 import Header from "@/components/Header";
 import Index from "./pages/Index.tsx";
 import ProductDetail from "./pages/ProductDetail.tsx";
@@ -17,6 +18,8 @@ import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import AdminOrders from "./pages/AdminOrders.tsx";
 import AdminProducts from "./pages/AdminProducts.tsx";
+import AdminCategories from "./pages/AdminCategories.tsx";
+import AdminFinance from "./pages/AdminFinance.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -30,12 +33,15 @@ const App = () => (
         <AdminProvider>
           <OrderProvider>
             <ProductProvider>
+            <CategoryProvider>
             <CartProvider>
               <Routes>
-                {/* Admin routes — no Header/footer */}
+                {/* Admin routes */}
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/orders" element={<AdminOrders />} />
                 <Route path="/admin/products" element={<AdminProducts />} />
+                <Route path="/admin/categories" element={<AdminCategories />} />
+                <Route path="/admin/finance" element={<AdminFinance />} />
                 <Route path="/admin/login" element={<><Header /><AdminLogin /></>} />
 
                 {/* Public routes */}
@@ -62,6 +68,7 @@ const App = () => (
                 } />
               </Routes>
             </CartProvider>
+            </CategoryProvider>
             </ProductProvider>
           </OrderProvider>
         </AdminProvider>
