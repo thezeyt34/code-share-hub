@@ -12,9 +12,10 @@ import AdminLayout from "@/components/AdminLayout";
 import { toast } from "sonner";
 
 const AdminProducts = () => {
-  const { products, updateProduct, deleteProduct } = useProducts();
+  const { products, updateProduct, deleteProduct, addProduct } = useProducts();
   const [search, setSearch] = useState("");
   const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
   const [form, setForm] = useState<Partial<Product>>({});
 
   const filtered = products.filter((p) =>
@@ -22,12 +23,19 @@ const AdminProducts = () => {
   );
 
   const openEdit = (product: Product) => {
+    setIsAdding(false);
     setEditProduct(product);
     setForm({ ...product });
   };
 
+  const openAdd = () => {
+    setEditProduct(null);
+    setIsAdding(true);
+    setForm({ name: "", price: 0, costPrice: 0, oldPrice: 0, discount: 0, image: "", category: "Qurilish mollari", stock: "", description: "" });
+  };
+
   const handleSave = () => {
-    if (!editProduct || !form.name?.trim()) {
+    if (!form.name?.trim()) {
       toast.error("Nomi bo'sh bo'lmasligi kerak");
       return;
     }
@@ -36,8 +44,8 @@ const AdminProducts = () => {
     const oldPrice = Number(form.oldPrice) || 0;
     const discount = oldPrice > 0 ? Math.round(((oldPrice - price) / oldPrice) * 100) : 0;
 
-    updateProduct(editProduct.id, {
-      name: form.name,
+    const data = {
+      name: form.name!,
       price,
       costPrice,
       oldPrice,
@@ -45,10 +53,18 @@ const AdminProducts = () => {
       category: form.category || "Qurilish mollari",
       stock: form.stock || "",
       description: form.description || "",
-      image: form.image,
-    });
-    setEditProduct(null);
-    toast.success("Mahsulot yangilandi");
+      image: form.image || "",
+    };
+
+    if (isAdding) {
+      addProduct({ ...data, id: form.name!.toLowerCase().replace(/[^a-z0-9]+/g, "-") } as Product);
+      setIsAdding(false);
+      toast.success("Mahsulot qo'shildi");
+    } else if (editProduct) {
+      updateProduct(editProduct.id, data);
+      setEditProduct(null);
+      toast.success("Mahsulot yangilandi");
+    }
   };
 
   const handleDelete = (id: string, name: string) => {
@@ -65,7 +81,7 @@ const AdminProducts = () => {
           <h1 className="text-2xl font-bold">Mahsulotlar</h1>
           <p className="text-sm text-muted-foreground">{products.length} ta mahsulot</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={openAdd}>
           <Plus className="h-4 w-4" /> Qo'shish
         </Button>
       </div>
@@ -140,10 +156,10 @@ const AdminProducts = () => {
       </div>
 
       {/* Edit Dialog */}
-      <Dialog open={!!editProduct} onOpenChange={(o) => !o && setEditProduct(null)}>
+      <Dialog open={!!editProduct || isAdding} onOpenChange={(o) => { if (!o) { setEditProduct(null); setIsAdding(false); } }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Mahsulotni tahrirlash</DialogTitle>
+            <DialogTitle>{isAdding ? "Yangi mahsulot" : "Mahsulotni tahrirlash"}</DialogTitle>
           </DialogHeader>
 
           <Tabs defaultValue="asosiy">
@@ -276,8 +292,8 @@ const AdminProducts = () => {
           </Tabs>
 
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => setEditProduct(null)}>Bekor</Button>
-            <Button onClick={handleSave}>Saqlash</Button>
+            <Button variant="outline" onClick={() => { setEditProduct(null); setIsAdding(false); }}>Bekor</Button>
+            <Button onClick={handleSave}>{isAdding ? "Qo'shish" : "Saqlash"}</Button>
           </div>
         </DialogContent>
       </Dialog>
