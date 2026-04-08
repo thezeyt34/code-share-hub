@@ -1,15 +1,28 @@
 import { ShoppingCart, Package, Box, DollarSign } from "lucide-react";
 import { useOrders } from "@/context/OrderContext";
-import { products, formatPrice } from "@/data/products";
+import { useProducts } from "@/context/ProductContext";
+import { formatPrice } from "@/data/products";
 import AdminLayout from "@/components/AdminLayout";
 
 const AdminDashboard = () => {
   const { orders } = useOrders();
+  const { products } = useProducts();
 
   const newOrders = orders.filter((o) => o.status === "Yangi").length;
   const totalOrders = orders.length;
   const totalProducts = products.length;
-  const totalRevenue = orders.reduce((sum, o) => sum + o.totalPrice, 0);
+
+  // Calculate profit: for each order item, profit = (sellingPrice - costPrice) * quantity
+  const totalProfit = orders
+    .filter((o) => o.status !== "Bekor qilingan")
+    .reduce((sum, o) => {
+      const orderProfit = o.items.reduce((itemSum, item) => {
+        const sellingPrice = item.selectedVariant?.price ?? item.product.price;
+        const costPrice = item.product.costPrice || 0;
+        return itemSum + (sellingPrice - costPrice) * item.quantity;
+      }, 0);
+      return sum + orderProfit;
+    }, 0);
 
   const statusColor = (status: string) => {
     switch (status) {
@@ -65,8 +78,8 @@ const AdminDashboard = () => {
         </div>
         <div className="flex items-center justify-between rounded-xl border bg-background p-5">
           <div>
-            <p className="text-sm text-muted-foreground">Daromad</p>
-            <p className="mt-1 text-2xl font-bold">{formatPrice(totalRevenue)}</p>
+            <p className="text-sm text-muted-foreground">Foyda</p>
+            <p className="mt-1 text-2xl font-bold">{formatPrice(totalProfit)}</p>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: "hsl(25, 95%, 53%)" }}>
             <DollarSign className="h-5 w-5 text-white" />

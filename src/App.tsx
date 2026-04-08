@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
 import { OrderProvider } from "@/context/OrderContext";
+import { ProductProvider } from "@/context/ProductContext";
 import { AdminProvider } from "@/context/AdminContext";
 import Header from "@/components/Header";
 import Index from "./pages/Index.tsx";
@@ -15,6 +16,7 @@ import OrderSuccess from "./pages/OrderSuccess.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import AdminOrders from "./pages/AdminOrders.tsx";
+import AdminProducts from "./pages/AdminProducts.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -27,11 +29,13 @@ const App = () => (
       <BrowserRouter>
         <AdminProvider>
           <OrderProvider>
+            <ProductProvider>
             <CartProvider>
               <Routes>
                 {/* Admin routes — no Header/footer */}
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/orders" element={<AdminOrders />} />
+                <Route path="/admin/products" element={<AdminProducts />} />
                 <Route path="/admin/login" element={<><Header /><AdminLogin /></>} />
 
                 {/* Public routes */}
@@ -58,6 +62,7 @@ const App = () => (
                 } />
               </Routes>
             </CartProvider>
+            </ProductProvider>
           </OrderProvider>
         </AdminProvider>
       </BrowserRouter>

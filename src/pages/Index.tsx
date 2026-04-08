@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "@/components/ProductCard";
-import { products, categories } from "@/data/products";
+import { useProducts } from "@/context/ProductContext";
+import { categories } from "@/data/products";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("Hammasi");
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("search")?.toLowerCase() || "";
+  const { products } = useProducts();
 
   const filteredProducts = products.filter((p) => {
     const matchesCategory = activeCategory === "Hammasi" || p.category === activeCategory;
