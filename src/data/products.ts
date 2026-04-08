@@ -7,6 +7,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
+  costPrice: number;
   oldPrice: number;
   discount: number;
   image: string;
@@ -27,6 +28,7 @@ export const products: Product[] = [
     id: "sement",
     name: "Sement",
     price: 130000,
+    costPrice: 110000,
     oldPrice: 138000,
     discount: 6,
     image: "https://images.unsplash.com/photo-1518005068251-37900150dfca?w=600&h=600&fit=crop",
@@ -37,6 +39,7 @@ export const products: Product[] = [
     id: "mashxad",
     name: "Mashxad",
     price: 25000,
+    costPrice: 19000,
     oldPrice: 28000,
     discount: 11,
     image: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=600&h=600&fit=crop",
@@ -47,6 +50,7 @@ export const products: Product[] = [
     id: "temir-samarez",
     name: "Temir samarez",
     price: 30000,
+    costPrice: 24000,
     oldPrice: 31500,
     discount: 5,
     image: "https://images.unsplash.com/photo-1586864387789-628af9feed72?w=600&h=600&fit=crop",
@@ -57,6 +61,7 @@ export const products: Product[] = [
     id: "samarez",
     name: "Samarez",
     price: 27000,
+    costPrice: 23500,
     oldPrice: 28000,
     discount: 4,
     image: "https://images.unsplash.com/photo-1609205807107-2573c6402977?w=600&h=600&fit=crop",
@@ -73,6 +78,7 @@ export const products: Product[] = [
     id: "mix",
     name: "Mix",
     price: 10200,
+    costPrice: 8900,
     oldPrice: 10550,
     discount: 3,
     image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&h=600&fit=crop",
