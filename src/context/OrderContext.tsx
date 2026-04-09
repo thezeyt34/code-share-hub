@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
 import { CartItem, formatPrice } from "@/data/products";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Order {
   id: string;
@@ -24,109 +25,97 @@ interface OrderContextType {
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
-// Seed some demo orders so the dashboard isn't empty
-const now = new Date();
-const demoOrders: Order[] = [
-  {
-    id: "1",
-    orderNumber: "XOZ-20260407-8796",
-    customerName: "Nizomiddin",
-    phone: "+998947267726",
-    items: [],
-    totalPrice: 390000,
-    status: "Yetkazildi",
-    createdAt: new Date(now.getTime() - 60000),
-    deliveryMethod: "delivery",
-    paymentMethod: "cash",
-  },
-  {
-    id: "2",
-    orderNumber: "XOZ-20260402-0744",
-    customerName: "Gsusi",
-    phone: "+998992592009",
-    items: [],
-    totalPrice: 165000,
-    status: "Yangi",
-    createdAt: new Date(2026, 3, 2),
-    deliveryMethod: "pickup",
-    paymentMethod: "card",
-  },
-  {
-    id: "3",
-    orderNumber: "XOZ-20260402-3182",
-    customerName: "Shukurullox",
-    phone: "+998992592009",
-    items: [],
-    totalPrice: 840000,
-    status: "Yangi",
-    createdAt: new Date(2026, 3, 2),
-    deliveryMethod: "delivery",
-    paymentMethod: "transfer",
-  },
-  {
-    id: "4",
-    orderNumber: "XOZ-20260402-4445",
-    customerName: "Shukurullox",
-    phone: "+998992592009",
-    items: [],
-    totalPrice: 3900000,
-    status: "Yangi",
-    createdAt: new Date(2026, 3, 2),
-    deliveryMethod: "delivery",
-    paymentMethod: "cash",
-  },
-  {
-    id: "5",
-    orderNumber: "XOZ-20260331-9079",
-    customerName: "nizomiddin",
-    phone: "+998947267726",
-    items: [],
-    totalPrice: 115000,
-    status: "Yangi",
-    createdAt: new Date(2026, 2, 31),
-    deliveryMethod: "pickup",
-    paymentMethod: "cash",
-  },
-  {
-    id: "6",
-    orderNumber: "XOZ-20260331-9679",
-    customerName: "ssss",
-    phone: "+998888254803",
-    items: [],
-    totalPrice: 30000,
-    status: "Tayyor",
-    createdAt: new Date(2026, 2, 31),
-    deliveryMethod: "pickup",
-    paymentMethod: "card",
-  },
-  {
-    id: "7",
-    orderNumber: "XOZ-20260326-0477",
-    customerName: "Шукуруллох",
-    phone: "+998992592009",
-    items: [],
-    totalPrice: 75000,
-    status: "Yangi",
-    createdAt: new Date(2026, 2, 26),
-    deliveryMethod: "delivery",
-    paymentMethod: "cash",
-  },
-];
-
 export function OrderProvider({ children }: { children: ReactNode }) {
-  const [orders, setOrders] = useState<Order[]>(demoOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
 
-  const addOrder = useCallback((order: Omit<Order, "id" | "createdAt" | "status">) => {
+  const fetchOrders = useCallback(async () => {
+    const { data: rows, error } = await supabase
+      .from("orders")
+      .select("*, order_items(*)")
+      .order("created_at", { ascending: false });
+    if (error) {
+      console.error("Failed to fetch orders", error);
+      return;
+    }
+    const mapped: Order[] = (rows || []).map((r: any) => ({
+      id: r.id,
+      orderNumber: r.order_number,
+      customerName: r.customer_name,
+      phone: r.phone,
+      totalPrice: r.total_price,
+      status: r.status as Order["status"],
+      createdAt: new Date(r.created_at),
+      deliveryMethod: r.delivery_method as "pickup" | "delivery",
+      paymentMethod: r.payment_method as "cash" | "card" | "transfer",
+      comment: r.comment || undefined,
+      address: r.address || undefined,
+      items: (r.order_items || []).map((item: any) => ({
+        product: {
+          id: "",
+          name: item.product_name,
+          price: item.product_price,
+          costPrice: 0,
+          oldPrice: 0,
+          discount: 0,
+          image: "",
+          category: "",
+          stock: "",
+        },
+        quantity: item.quantity,
+        selectedVariant: item.variant_label ? { label: item.variant_label, price: item.product_price } : undefined,
+      })),
+    }));
+    setOrders(mapped);
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  const addOrder = useCallback(async (order: Omit<Order, "id" | "createdAt" | "status">) => {
+    const { data, error } = await supabase
+      .from("orders")
+      .insert({
+        order_number: order.orderNumber,
+        customer_name: order.customerName,
+        phone: order.phone,
+        total_price: order.totalPrice,
+        delivery_method: order.deliveryMethod,
+        payment_method: order.paymentMethod,
+        comment: order.comment || "",
+        address: order.address || "",
+      })
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to add order", error);
+      return;
+    }
+
+    // Insert order items
+    if (order.items.length > 0) {
+      await supabase.from("order_items").insert(
+        order.items.map((item) => ({
+          order_id: data.id,
+          product_name: item.product.name,
+          product_price: item.selectedVariant?.price ?? item.product.price,
+          quantity: item.quantity,
+          variant_label: item.selectedVariant?.label || "",
+        }))
+      );
+    }
+
     const newOrder: Order = {
       ...order,
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
+      id: data.id,
+      createdAt: new Date(data.created_at),
       status: "Yangi",
     };
     setOrders((prev) => [newOrder, ...prev]);
   }, []);
 
-  const updateOrderStatus = useCallback((id: string, status: Order["status"]) => {
+  const updateOrderStatus = useCallback(async (id: string, status: Order["status"]) => {
+    await supabase.from("orders").update({ status }).eq("id", id);
     setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
   }, []);
 

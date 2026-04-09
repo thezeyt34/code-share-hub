@@ -2,13 +2,16 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/context/ProductContext";
-import { categories } from "@/data/products";
+import { useCategories } from "@/context/CategoryContext";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("Hammasi");
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("search")?.toLowerCase() || "";
   const { products } = useProducts();
+  const { categories } = useCategories();
+
+  const categoryNames = ["Hammasi", ...categories.filter((c) => c.active).map((c) => c.name)];
 
   const filteredProducts = products.filter((p) => {
     const matchesCategory = activeCategory === "Hammasi" || p.category === activeCategory;
@@ -18,7 +21,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero */}
       <section className="py-12 text-center">
         <div className="container">
           <h1 className="text-4xl font-bold text-primary md:text-5xl">
@@ -30,11 +32,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Products */}
       <section className="pb-16">
         <div className="container">
           <div className="mb-8 flex gap-2">
-            {categories.map((cat) => (
+            {categoryNames.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
