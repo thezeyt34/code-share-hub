@@ -2,13 +2,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ArrowLeft, Minus, Plus, ShoppingCart, Truck, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { products, formatPrice, ProductVariant } from "@/data/products";
+import { formatPrice, ProductVariant } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useProducts } from "@/context/ProductContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { products } = useProducts();
   const product = products.find((p) => p.id === id);
 
   const [quantity, setQuantity] = useState(1);
@@ -47,12 +49,10 @@ const ProductDetail = () => {
         </button>
 
         <div className="grid gap-8 md:grid-cols-2">
-          {/* Image */}
           <div className="overflow-hidden rounded-xl bg-muted">
             <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
           </div>
 
-          {/* Info */}
           <div>
             <p className="text-sm text-muted-foreground">{product.category}</p>
             <h1 className="mt-1 text-3xl font-bold">{product.name}</h1>
@@ -67,7 +67,6 @@ const ProductDetail = () => {
               Omborda: {product.stock}
             </p>
 
-            {/* Variants */}
             {hasVariants && (
               <div className="mt-6">
                 <h4 className="mb-3 text-sm font-medium">Variantni tanlang</h4>
@@ -75,10 +74,7 @@ const ProductDetail = () => {
                   {product.variants!.map((variant) => (
                     <button
                       key={variant.label}
-                      onClick={() => {
-                        setSelectedVariant(variant);
-                        setVariantError(false);
-                      }}
+                      onClick={() => { setSelectedVariant(variant); setVariantError(false); }}
                       className={`rounded-lg border px-4 py-2 text-sm transition-colors ${
                         selectedVariant?.label === variant.label
                           ? "border-primary bg-primary/10 text-primary"
@@ -90,13 +86,10 @@ const ProductDetail = () => {
                     </button>
                   ))}
                 </div>
-                {variantError && (
-                  <p className="mt-2 text-sm text-destructive">Iltimos, variant tanlang</p>
-                )}
+                {variantError && <p className="mt-2 text-sm text-destructive">Iltimos, variant tanlang</p>}
               </div>
             )}
 
-            {/* Quantity */}
             <div className="mt-6 flex items-center gap-3">
               <span className="text-sm font-medium">Miqdor:</span>
               <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
@@ -108,13 +101,11 @@ const ProductDetail = () => {
               </Button>
             </div>
 
-            {/* Add to Cart */}
             <Button className="mt-6 w-full gap-2" size="lg" onClick={handleAddToCart}>
               <ShoppingCart className="h-5 w-5" />
               Savatga qo'shish
             </Button>
 
-            {/* Delivery & Payment */}
             <div className="mt-6 flex gap-6 rounded-lg border p-4">
               <div className="flex items-start gap-3">
                 <Truck className="mt-0.5 h-5 w-5 text-muted-foreground" />
@@ -132,7 +123,6 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Description */}
             {product.description && (
               <div className="mt-6">
                 <h3 className="text-lg font-semibold">Tavsif</h3>
