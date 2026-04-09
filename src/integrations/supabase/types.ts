@@ -14,7 +14,187 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          product_name: string
+          product_price: number
+          quantity: number
+          variant_label: string | null
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          product_name: string
+          product_price?: number
+          quantity?: number
+          variant_label?: string | null
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          product_name?: string
+          product_price?: number
+          quantity?: number
+          variant_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          address: string | null
+          comment: string | null
+          created_at: string
+          customer_name: string
+          delivery_method: string
+          id: string
+          order_number: string
+          payment_method: string
+          phone: string
+          status: string
+          total_price: number
+        }
+        Insert: {
+          address?: string | null
+          comment?: string | null
+          created_at?: string
+          customer_name: string
+          delivery_method?: string
+          id?: string
+          order_number: string
+          payment_method?: string
+          phone: string
+          status?: string
+          total_price?: number
+        }
+        Update: {
+          address?: string | null
+          comment?: string | null
+          created_at?: string
+          customer_name?: string
+          delivery_method?: string
+          id?: string
+          order_number?: string
+          payment_method?: string
+          phone?: string
+          status?: string
+          total_price?: number
+        }
+        Relationships: []
+      }
+      product_variants: {
+        Row: {
+          id: string
+          label: string
+          price: number
+          product_id: string
+        }
+        Insert: {
+          id?: string
+          label: string
+          price?: number
+          product_id: string
+        }
+        Update: {
+          id?: string
+          label?: string
+          price?: number
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string
+          cost_price: number
+          created_at: string
+          description: string | null
+          discount: number
+          id: string
+          image: string
+          name: string
+          old_price: number
+          price: number
+          slug: string
+          stock: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          cost_price?: number
+          created_at?: string
+          description?: string | null
+          discount?: number
+          id?: string
+          image?: string
+          name: string
+          old_price?: number
+          price?: number
+          slug: string
+          stock?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cost_price?: number
+          created_at?: string
+          description?: string | null
+          discount?: number
+          id?: string
+          image?: string
+          name?: string
+          old_price?: number
+          price?: number
+          slug?: string
+          stock?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
